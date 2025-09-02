@@ -1,0 +1,14 @@
+# API response format files
+current_weather.json
+forecast_weather.json
+  
+# Dummy/test HTML files
+zdummy.html
+
+# OS system files
+.DS_Store
+Thumbs.db
+
+# VS Code settings
+.vscode/
+*.code-workspace
