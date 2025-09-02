@@ -1,6 +1,6 @@
 # API response format files
-current_weather.json
-forecast_weather.json
+currentAPI.json
+forecast.json
   
 # Dummy/test HTML files
 zdummy.html

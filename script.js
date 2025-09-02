@@ -26,8 +26,8 @@ const weatherIconMap = {
 
 
 // Event Listener on search button
-btnSearchWeather.addEventListener("click", () => {
-    // e.preventDefault(); // Prevent form submission
+btnSearchWeather.addEventListener("click", (e) => {
+    e.preventDefault(); // Prevent form submission
   const cityName = cityInput.value.trim();
   if (!cityName) {
     displayTodaysDetails.innerHTML = `
