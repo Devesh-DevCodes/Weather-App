@@ -1,6 +1,7 @@
 # API response format files
 currentAPI.json
 forecast.json
+geocoding.json
   
 # Dummy/test HTML files
 zdummy.html
