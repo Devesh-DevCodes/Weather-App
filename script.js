@@ -1,8 +1,14 @@
 const cityInput = document.getElementById("cityVal");
+const btnSearchWeather = document.getElementById("btn-check-weather");
+
 const displayTodaysDetails = document.getElementById("display-todays-weather");
 const displayForecastDetails = document.getElementById("display-forecast-weather");
-const btnSearchWeather = document.getElementById("btn-check-weather");
+
+const navCurrentWeather = document.getElementById("nav-current-weather");
+const navNext5Days = document.getElementById("nav-next-5days");
+
 const API_key = "d747ebbef652723004a923baeb7230a4";
+let apiEndpoint = `https://api.openweathermap.org/data/2.5/`;
 const weatherIconMap = {
   "01d": "./assets/sunny.png",   // clear sky day
   "01n": "./assets/sunny.png",   // clear sky night (you can add moon icon if you have one)
@@ -20,33 +26,104 @@ const weatherIconMap = {
   "11n": "./assets/thunder.png",
   "13d": "./assets/snow.png",    // snow
   "13n": "./assets/snow.png",
-  "50d": "./assets/fog.png",     
+  "50d": "./assets/fog.png",
   "50n": "./assets/fog.png"
 };
 
+// ---------------------- Detect Current Location ----------------------
+window.addEventListener("load", async ()=>{
+  if(!navigator.geolocation){
+    console.log("Geolocation is not supported by this browser.");
+    return;
+  }
+  // getCurrentPosition(successCallback, errorCallback);
+  navigator.geolocation.getCurrentPosition( 
+    //successCallback
+    (position)=>{
+      let {latitude, longitude} = position.coords;
+      console.log(latitude, longitude);
+      getCurrentCityName(latitude, longitude);
+      // let lat = position.coords.latitude;
+      // let long = position.coords.longitude;
+    }, 
+    // errorCallback
+    (err)=>{
+      console.log(`Error : ${err.message}`);
+    });  
+})
+// ---------------------- Get City from Lat/Lon ----------------------
+let getCurrentCityName = async (latitude, longitude)=>{
+  let url = `http://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&appid=${API_key}`
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    let cityName = data[0].name; 
 
+    cityInput.value = cityName; // set input box value
+    console.log("Detected city:" , cityName);
+
+    // Directly call weather functions
+    getCurrentWeather(cityName);
+    getForecastDetails(cityName);
+
+    // Default: show Today's Weather
+    showTodays();
+
+  } catch (error) {
+    console.log(`Error : ${error.message}`);
+  }
+
+}
+
+// ---------------------- Nav Controls ----------------------
+navCurrentWeather.addEventListener("click", () => {
+  showTodays();
+});
+navNext5Days.addEventListener("click", () => {
+  showNext5Days();
+});
+
+// ---------------------- Display controls : Toggle Helpers----------------------
+function showTodays(){
+  displayTodaysDetails.classList.add("active");
+  displayForecastDetails.classList.remove("active");
+  navCurrentWeather.classList.add("active");
+  navNext5Days.classList.remove("active");
+}
+
+function showNext5Days(){
+  displayTodaysDetails.classList.remove("active");
+  displayForecastDetails.classList.add("active");
+  navCurrentWeather.classList.remove("active");
+  navNext5Days.classList.add("active");
+}
+
+
+// ----- Manual Search -----
 // Event Listener on search button
 btnSearchWeather.addEventListener("click", (e) => {
-    e.preventDefault(); // Prevent form submission
+  e.preventDefault(); // Prevent form submission
   const cityName = cityInput.value.trim();
   if (!cityName) {
-    displayTodaysDetails.innerHTML = `
-            <p style="color : red; background-color : yellow; max-width:fit-content;">⚠️ Please Enter City Name</p>
-        `;
+    displayTodaysDetails.innerHTML = `<p style="color : red; background-color : yellow; max-width:fit-content;">⚠️ Please Enter City Name</p>`;
     displayForecastDetails.innerHTML = "";
-    // displayForecastDetails.style.display = "none";
     displayForecastDetails.classList.remove("active");
     cityInput.focus(); // After error (empty input or invalid city),auto-focus back on the input field
     return; // stop further execution
   }
+
   // Call both functions only if valid city
   getCurrentWeather(cityName);
-  getForecastDetails(cityName); // only fetch if city exists
+  getForecastDetails(cityName); 
+
+  // Default: show Today's Weather
+  showTodays();
 });
 
 // Function to Fetch current weather  details
 async function getCurrentWeather(cityName) {
-  const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${API_key}&units=metric`;
+  let type = "weather";
+  const url = `${apiEndpoint}${type}?q=${cityName}&appid=${API_key}&units=metric`;
   try {
     const res = await fetch(url);
     const todaysData = await res.json();
@@ -55,16 +132,15 @@ async function getCurrentWeather(cityName) {
                 <p style="color : red; background-color : yellow; max-width:fit-content;">❌ City Not Found, Please Enter Valid City</p>
             `;
       cityInput.focus(); // After error (empty input or invalid city),auto-focus back on the input field
-      return ;
+      return;
     } else {
-        displayTodaysDetails.classList.add("active");
-        displayForecastDetails.classList.remove("active");
-        const currDate = new Date(todaysData.dt*1000).toLocaleString("en-IN", { weekday: 'short', day: 'numeric', month: 'short' , hour:'numeric',minute:'numeric',hour12:true}).toUpperCase();;
-        // console.log(currDate);
-        const iconCode = todaysData.weather[0].icon;
-        const iconUrl = weatherIconMap[iconCode] || "./assets/cloudy.png";
+      showTodays();
+      const currDate = new Date(todaysData.dt * 1000).toLocaleString("en-IN", { weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: 'numeric', hour12: true }).toUpperCase();;
+      // console.log(currDate);
+      const iconCode = todaysData.weather[0].icon;
+      const iconUrl = weatherIconMap[iconCode] || "./assets/cloudy.png";
 
-        displayTodaysDetails.innerHTML = `
+      displayTodaysDetails.innerHTML = `
         <div class="todaysDate"> ${currDate}</div>
         <div class="main-weather">
             <div class="inside-main-weather">
@@ -142,7 +218,8 @@ checkWeather() {
 
 // Function to display forecast weather details
 async function getForecastDetails(cityName) {
-  const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${API_key}&units=metric`;
+  let type = "forecast";
+  const url = `${apiEndpoint}${type}?q=${cityName}&appid=${API_key}&units=metric`;
   try {
     const res = await fetch(url);
     const forecastData = await res.json();
@@ -157,7 +234,7 @@ async function getForecastDetails(cityName) {
 
     // console.log(forecastData);
     // displayForecastDetails.style.display = "block";
-    displayForecastDetails.classList.remove("active");
+    // displayForecastDetails.classList.remove("active");
     let listData = forecastData.list;
     let dailySummary = processDailySummary(listData); // array of summary objects
     console.log(dailySummary);
@@ -166,7 +243,7 @@ async function getForecastDetails(cityName) {
     displayForecastDetails.innerHTML = "";
     for (let dailyData of dailySummary) {
       // console.log(listData[i]);
-      let date = new Date(dailyData.date).toLocaleString("en-IN",{day:"numeric",weekday:"short", month:"short"});
+      let date = new Date(dailyData.date).toLocaleString("en-IN", { day: "numeric", weekday: "short", month: "short" });
       let temp = dailyData.avgTemp;
       let minTemp = dailyData.minTemp;
       let maxTemp = dailyData.maxTemp;
@@ -178,8 +255,8 @@ async function getForecastDetails(cityName) {
       let rainPercnt = dailyData.rainChance;
 
       let iconUrl = weatherIconMap[weatherStatusCode];
-    //   let iconUrl = `https://openweathermap.org/img/wn/${weatherStatusCode}@2x.png`;
-    
+      //   let iconUrl = `https://openweathermap.org/img/wn/${weatherStatusCode}@2x.png`;
+
       displayForecastDetails.innerHTML += `
             <div class="forecast-card">
               <div class="fc-left">
@@ -189,7 +266,7 @@ async function getForecastDetails(cityName) {
               
               <div class="fc-middle">
                 <div>
-                  <span class="rainPercnt">${parseFloat(rainPercnt) * 100}%</span>
+                  <span class="rainPercnt">${parseFloat(Math.round(rainPercnt)) * 100}%</span>
                   <img src="${iconUrl}" alt="${weatherStatus}" class="w-img">
                 </div>
                 <div class="weatherStatus">${weatherStatus}</div>
@@ -253,13 +330,13 @@ function processDailySummary(listData) {
 
     dailySummary.push({
       date,
-      avgTemp: avg(data.temps).toFixed(2),
-      minTemp: Math.min(...data.temps).toFixed(2),
-      maxTemp: Math.max(...data.temps).toFixed(2),
-      avgFeelsLike: avg(data.feelsLike).toFixed(2),
+      avgTemp: avg(data.temps).toFixed(1),
+      minTemp: Math.min(...data.temps).toFixed(1),
+      maxTemp: Math.max(...data.temps).toFixed(1),
+      avgFeelsLike: avg(data.feelsLike).toFixed(1),
       mainWeather: mostCommonElement(data.weatherConditions),
-      avgHumidity: avg(data.humidity).toFixed(2),
-      avgWind: avg(data.wind).toFixed(2),
+      avgHumidity: avg(data.humidity).toFixed(1),
+      avgWind: avg(data.wind).toFixed(1),
       rainChance: data.rainChances.length ? Math.max(...data.rainChances) : 0,
     });
   }
@@ -283,24 +360,24 @@ function formatTime(unixTime) {
 }
 // helper Function to calculate average
 const avg = (arr) => {
-    if (arr.length === 0) return 0;
-    let sum = 0;
-    for (let x of arr) {
-        sum += x;
-    }
-    return sum / arr.length;
+  if (arr.length === 0) return 0;
+  let sum = 0;
+  for (let x of arr) {
+    sum += x;
+  }
+  return sum / arr.length;
 };
 
 // helper function to find most common element
 mostCommonElement = (arr) => {
   let countMap = {};
-  let iconMap={};
+  let iconMap = {};
   for (let x of arr) {
     // count freq of main weather condition
     countMap[x.main] = countMap[x.main] ? countMap[x.main] + 1 : 1;
 
     // track icon
-    iconMap[x.main]=x.icon;
+    iconMap[x.main] = x.icon;
   }
 
   let maxCount = 0;
@@ -314,33 +391,11 @@ mostCommonElement = (arr) => {
   }
   let mostCommonIcon = iconMap[mostCommonMain];
 
-  return [mostCommonMain,mostCommonIcon];
+  return [mostCommonMain, mostCommonIcon];
 };
 
 
-// navigation
-const navCurrentWeather = document.getElementById("nav-current-weather");
-const navNext5Days = document.getElementById("nav-next-5days");
 
-navCurrentWeather.addEventListener("click", () => {
-  // toggle sections
-  displayTodaysDetails.classList.add("active");
-  displayForecastDetails.classList.remove("active");
 
-  // toggle button states (optional, for styling)
-  navCurrentWeather.classList.add("active");
-  navNext5Days.classList.remove("active");
-});
-
-navNext5Days.addEventListener("click", () => {
-  // toggle sections
-  displayTodaysDetails.classList.remove("active");
-  displayForecastDetails.classList.add("active");
-
-  // toggle button states
-  navCurrentWeather.classList.remove("active");
-  navNext5Days.classList.add("active");
-
-});
 
 
