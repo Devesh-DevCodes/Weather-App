@@ -2,8 +2,8 @@
 
 ## 🚀 Flow of the App
 1. **On Page Load**  
-   - Detects user’s location via GPS.  
-   - Fetches weather data.  
+   - Detects user’s location via via Geolocation API (may use GPS, Wi-Fi, or IP depending on the device). 
+   - Fetches and displays the current weather for the detected location.  
    - Displays **Today’s Weather** by default (`showTodays()`).
 
 2. **On City Search**  
