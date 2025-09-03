@@ -53,9 +53,9 @@ window.addEventListener("load", async ()=>{
 })
 // ---------------------- Get City from Lat/Lon ----------------------
 let getCurrentCityName = async (latitude, longitude)=>{
-  let url = `http://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&appid=${API_key}`
+  let geoUrl = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&appid=${API_key}`
   try {
-    const res = await fetch(url);
+    const res = await fetch(geoUrl);
     const data = await res.json();
     let cityName = data[0].name; 
 
