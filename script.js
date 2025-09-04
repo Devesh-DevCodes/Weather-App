@@ -1,3 +1,17 @@
+// Check if the browser supports service workers 
+if ('serviceWorker' in navigator) {
+  // Register the service worker
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then((registration) => {
+        console.log('Service Worker registered with scope: ', registration.scope);
+      })
+      .catch((error) => {
+        console.log('Service Worker registration failed: ', error);
+      });
+  })
+}
+
 const cityInput = document.getElementById("cityVal");
 const btnSearchWeather = document.getElementById("btn-check-weather");
 
@@ -105,7 +119,7 @@ btnSearchWeather.addEventListener("click", (e) => {
   e.preventDefault(); // Prevent form submission
   const cityName = cityInput.value.trim();
   if (!cityName) {
-    displayTodaysDetails.innerHTML = `<p class="error">⚠️ Please Enter City Name</p>`;
+    showError(displayTodaysDetails, "⚠️ Please Enter City Name");
     displayForecastDetails.innerHTML = "";
     displayForecastDetails.classList.remove("active");
     cityInput.focus(); // After error (empty input or invalid city),auto-focus back on the input field
@@ -128,9 +142,7 @@ async function getCurrentWeather(cityName) {
     const res = await fetch(url);
     const todaysData = await res.json();
     if (parseInt(todaysData.cod) !== 200) {
-      displayTodaysDetails.innerHTML = `
-                <p class="error">❌ City Not Found, Please Enter Valid City</p>
-            `;
+      showError(displayTodaysDetails, "❌ City Not Found, Please Enter Valid City");
       cityInput.focus(); // After error (empty input or invalid city),auto-focus back on the input field
       return;
     } else {
@@ -195,9 +207,14 @@ async function getCurrentWeather(cityName) {
 
     }
   } catch (error) {
-    displayTodaysDetails.innerHTML = `
-            <p class="error">Error : ${error.message}</p>
-        `;
+    // if offline
+      console.log(error);
+      if(!navigator.onLine){
+        showError(displayTodaysDetails , "!! You are offline !! ")
+      }
+      else{
+        showError(displayTodaysDetails , "!! Something went wrong !! ")
+      }
     return;
   }
 }
@@ -225,9 +242,7 @@ async function getForecastDetails(cityName) {
     const forecastData = await res.json();
 
     if (parseInt(forecastData.cod) !== 200) {
-      displayForecastDetails.innerHTML = `
-          <p class="error">❌ City Not Found, Please Enter Valid City</p>
-      `
+      showError(displayForecastDetails, "❌ City Not Found, Please Enter Valid City");
       cityInput.focus(); // After error (empty input or invalid city),auto-focus back on the input field
       return;
     }
@@ -280,10 +295,15 @@ async function getForecastDetails(cityName) {
             `;
     }
   } catch (error) {
-    displayForecastDetails.innerHTML = `
-        <p class="error">Error : ${error.message}</p>
-    `
-    console.error(error);
+      console.error(error);
+      // if offline
+      if(!navigator.onLine){
+        showError(displayForecastDetails , "!! You are offline !! ")
+      }
+      else{
+        showError(displayForecastDetails , "Something went wrong")
+      }
+      return;
   }
 }
 
@@ -395,7 +415,9 @@ mostCommonElement = (arr) => {
 };
 
 
+// helper function to display Error
 
-
-
+function showError(element,msg){
+  element.innerHTML = `<p class="error">${msg}</p>`
+}
 

@@ -1,56 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Weather App</title>
-    <!-- Font Awesome CDN -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
-      integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    />
-    <!--  -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
-    
-    <link rel="icon" href="./assets/app-icn.png" type="image/png" />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body id="background">
-    
-    <div id="top-weather">
-      <h1>Weather App</h1>
-      <nav class="nav-container">
-        <form id="weather-form">
-          <button id="btn-check-weather">
-            <i class="fa-solid fa-magnifying-glass"></i>
-          </button>
-          <input type="search" id="cityVal" placeholder="Enter City" required />
-        </form>
-        <div class="nav-weather">
-          <button class="btn-nav-w nav-current-weather" id="nav-current-weather">Today</button>
-          <button class="btn-nav-w nav-next-5days" id="nav-next-5days">5 Days</button>
-        </div>
-      </nav>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Weather App">
+  <meta name="theme-color" content="#84f8f8">
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
+    integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Weather Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.10/css/weather-icons.min.css">
+  <!-- Favicon -->
+  <link rel="icon" href="./assets/favicon_io/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="./assets/favicon_io/apple-touch-icon.png" type="image/png">
+  <link rel="icon" href="./assets/favicon_io/favicon-32x32.png" type="image/png">
+  <link rel="icon" href="./assets/favicon_io/favicon-16x16.png" type="image/png">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" href="style.css" />
+  <title>Weather App</title>
+</head>
+
+<body id="background">
+
+  <div id="top-weather">
+    <h1>Weather App</h1>
+    <nav class="nav-container">
+      <form id="weather-form">
+        <button id="btn-check-weather">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+        <input type="search" id="cityVal" placeholder="Enter City" required />
+      </form>
+      <div class="nav-weather">
+        <button class="btn-nav-w nav-current-weather" id="nav-current-weather">Today</button>
+        <button class="btn-nav-w nav-next-5days" id="nav-next-5days">5 Days</button>
+      </div>
+    </nav>
+  </div>
+
+  <main class="main-container" id="main-container">
+    <!-- Today's Weather Details -->
+    <!-- <section class="todays-container" id="todays-container"> -->
+    <div id="display-todays-weather" class="display-todays-weather display-weather active">
     </div>
+    <!-- </section> -->
 
-    <main class="main-container" id="main-container">
-      <!-- Today's Weather Details -->
-      <!-- <section class="todays-container" id="todays-container"> -->
-        <div id="display-todays-weather" class="display-todays-weather display-weather active" >
-        </div> 
-      <!-- </section> -->
+    <!-- Forecast Details -->
+    <!-- <section class="forecast-container" id="forecast-container"> -->
+    <div id="display-forecast-weather" class="display-forecast-weather display-weather">
+    </div>
+    <!-- </section> -->
 
-      <!-- Forecast Details -->
-      <!-- <section class="forecast-container" id="forecast-container"> -->
-        <div id="display-forecast-weather" class="display-forecast-weather display-weather" >
-        </div>
-      <!-- </section> -->
+  </main>
 
-    </main>
+  <script src="script.js"></script>
+</body>
 
-    <script src="script.js"></script>
-  </body>
 </html>
