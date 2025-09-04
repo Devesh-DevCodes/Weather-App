@@ -105,7 +105,7 @@ btnSearchWeather.addEventListener("click", (e) => {
   e.preventDefault(); // Prevent form submission
   const cityName = cityInput.value.trim();
   if (!cityName) {
-    displayTodaysDetails.innerHTML = `<p style="color : red; background-color : yellow; max-width:fit-content;">⚠️ Please Enter City Name</p>`;
+    displayTodaysDetails.innerHTML = `<p class="error">⚠️ Please Enter City Name</p>`;
     displayForecastDetails.innerHTML = "";
     displayForecastDetails.classList.remove("active");
     cityInput.focus(); // After error (empty input or invalid city),auto-focus back on the input field
@@ -129,7 +129,7 @@ async function getCurrentWeather(cityName) {
     const todaysData = await res.json();
     if (parseInt(todaysData.cod) !== 200) {
       displayTodaysDetails.innerHTML = `
-                <p style="color : red; max-width:fit-content; padding: 10px;">❌ City Not Found, Please Enter Valid City</p>
+                <p class="error">❌ City Not Found, Please Enter Valid City</p>
             `;
       cityInput.focus(); // After error (empty input or invalid city),auto-focus back on the input field
       return;
@@ -196,7 +196,7 @@ async function getCurrentWeather(cityName) {
     }
   } catch (error) {
     displayTodaysDetails.innerHTML = `
-            <p style="color : red; max-width:fit-content; padding: 10px;">Error : ${error.message}</p>
+            <p class="error">Error : ${error.message}</p>
         `;
     return;
   }
@@ -226,7 +226,7 @@ async function getForecastDetails(cityName) {
 
     if (parseInt(forecastData.cod) !== 200) {
       displayForecastDetails.innerHTML = `
-          <p style="color : red; max-width:fit-content; padding: 10px;">❌ City Not Found, Please Enter Valid City</p>
+          <p class="error">❌ City Not Found, Please Enter Valid City</p>
       `
       cityInput.focus(); // After error (empty input or invalid city),auto-focus back on the input field
       return;
@@ -281,7 +281,7 @@ async function getForecastDetails(cityName) {
     }
   } catch (error) {
     displayForecastDetails.innerHTML = `
-        <p style="color : red; max-width:fit-content; padding: 10px;">Error : ${error.message}</p>
+        <p class="error">Error : ${error.message}</p>
     `
     console.error(error);
   }
