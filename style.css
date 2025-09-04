@@ -5,6 +5,7 @@ html, body {
       font-family:  'Segoe UI', sans-serif;
       scroll-behavior: smooth;
       background : linear-gradient(145deg,#b0f8f8, #9ab2c4);
+      color: #024847;
 }
 
 
@@ -167,6 +168,7 @@ h1,.todaysDate {
 .display-todays-weather .main-weather .inside-main-weather .weatherStatus-img {
   width: 90px;
   height: auto;
+  animation: scaleAnimation 1s ease-in-out infinite;
 }
 
 .sub-weather {
@@ -275,6 +277,7 @@ h1,.todaysDate {
 .w-img {
   width: 40px;
   height: auto;
+  animation: scaleAnimation 1s ease-in-out infinite;
 }
 .weatherStatus {
   font-size: 14px;
@@ -316,10 +319,10 @@ h1,.todaysDate {
   font-size: 20px;
   color: #f42a2a;
   font-weight: 600;
-  animation: error 1s ease-in-out infinite;
+  animation: scaleAnimation 1s ease-in-out infinite;
 }
 
-@keyframes error {
+@keyframes scaleAnimation {
   0%{
     transform: scale(1);
   }

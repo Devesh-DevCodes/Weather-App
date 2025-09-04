@@ -155,9 +155,9 @@ async function getCurrentWeather(cityName) {
             <div class="inside-main-weather">
               <img src="${iconUrl}" alt="Weather: ${todaysData.weather[0].main}" class="weatherStatus-img" />
               <div class="weatherStatus">
-                <span>Weather :</span>
+                <!--<span>Weather :</span>-->
                 <span>${todaysData.weather[0].main}</span>
-                <span>${todaysData.weather[0].description}</span>
+                <span>${todaysData.weather[0].description.charAt(0).toUpperCase()+todaysData.weather[0].description.slice(1)}</span>
               </div>
             </div>
         </div>
